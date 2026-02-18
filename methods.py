@@ -46,8 +46,8 @@ class Particles:
 
     def tv_norm(self) -> Float[Tensor, "1"]:
         r"""
-        Returns the TV-norm of the discrete particle measure, *i.e.* the sum
-        of its **weights**:
+        Returns the TV-norm of the discrete particle measure, i.e. the sum
+        of the absolute values of its weights:
         $$
             \Vert \mu_omega \Vert_{TV} = \sum_j | omega_j |
         $$
@@ -81,6 +81,9 @@ class Evaluation(Generic[TProblem]):
 
 @dataclass
 class DiagonalGMMBlasso:
+    """
+    Class for encoding a BLASSO problem for a GMM with diagonal covariances.
+    """
     kappa: float
     y: Tensor # in the code, it is the sample (X_1,..X_n). 
     tau: float
@@ -98,6 +101,13 @@ class DiagonalGMMBlasso:
         return self.Evaluation(self, particles)
 
     class Evaluation(Evaluation["DiagonalGMMBlasso"]):
+        """
+        Define an evaluation context when computing the loss associated to a problem
+        on a specific particles configuration.
+
+        The goal is to allow performance optimization and behavior customization
+        through caching of the terms involved during the computation of the loss.
+        """
         # all the expressions for derivatives, etc are available in closed form. See ``cpgd_sympy.ipynb`, section II.
         def __init__(self, problem, particles):
             self.problem = problem
@@ -298,6 +308,9 @@ class DiagonalGMMBlasso:
 
 @dataclass
 class AdagradConicOptimizer:
+    """
+    Optimizer applied to Particles. AdaGrad with some modifications. 
+    """
     particles: Particles
     eta: float
     eps: float = 1e-8
@@ -338,6 +351,12 @@ class AdagradConicOptimizer:
 
 
 def adagrad_conic_optim(model, positions_init, weights_init, n_iter, store_history=False, eta=1.0):
+    """
+    Runs several optimization steps using AdaGradConicOptimizer for a given model.
+
+    The optimization is performed on a model of type `DiagonalGMM`,
+    starting from the provided initial positions and weights.
+    """
     #outside this function, we use the parametrization a for the weights (not omega)
     n_particles, total_dim = positions_init.shape
     assert model.d == total_dim // 2
@@ -418,6 +437,10 @@ def compute_W1_score(
     weights_estimate,
     distance="semi-distance",
 ):
+    """
+    Compute the W1 distance between the estimate and the target. The weights of the estimate are renormalized.
+    The distance used can be the semi-distance, the Fisher-Rao distance, or the Euclidean distance.
+    """
     if torch.isnan(positions_estimate).any() or torch.isnan(weights_estimate).any():
         return torch.inf
 
