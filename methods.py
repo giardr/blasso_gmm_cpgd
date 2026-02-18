@@ -337,7 +337,7 @@ class AdagradConicOptimizer:
             positions[:, d:].copy_(positions[:, d:].abs())
 
 
-def adagrad_conic_optim(model, positions_init, weights_init, n_iter, store_historic=False, eta=1.0):
+def adagrad_conic_optim(model, positions_init, weights_init, n_iter, store_history=False, eta=1.0):
     #outside this function, we use the parametrization a for the weights (not omega)
     n_particles, total_dim = positions_init.shape
     assert model.d == total_dim // 2
@@ -350,7 +350,7 @@ def adagrad_conic_optim(model, positions_init, weights_init, n_iter, store_histo
 
     optim = AdagradConicOptimizer(particles=particles, eta=eta)
 
-    if store_historic:
+    if store_history:
         iter_loss = torch.zeros(n_iter + 1)
         iter_particles = torch.zeros(
             n_iter + 1, n_particles, particles.positions.shape[1] + 1
@@ -370,13 +370,13 @@ def adagrad_conic_optim(model, positions_init, weights_init, n_iter, store_histo
             
         if torch.isnan(torch.tensor(current_loss)):
             print("NaN detected — stopping.")
-            if store_historic:
+            if store_history:
                 iter_loss[it] = torch.inf
                 iter_particles[it] = last_estimate
                 return iter_loss, iter_particles
             return torch.inf, last_estimate  # break
         
-        if store_historic:
+        if store_history:
             iter_particles[it] = last_estimate
             iter_loss[it] = current_loss
 
@@ -392,7 +392,7 @@ def adagrad_conic_optim(model, positions_init, weights_init, n_iter, store_histo
         ],
         dim=1,
     )
-    if store_historic:
+    if store_history:
         iter_loss[-1] = last_loss
         iter_particles[-1] = last_estimate
         return iter_loss, iter_particles
