@@ -1,6 +1,3 @@
-#TODO: attention, une partie est du plagiat du code de Roland et Nicolas
-
-
 from dataclasses import dataclass
 from functools import cached_property
 from typing import Optional, Self, TypeVar, Generic
@@ -387,7 +384,7 @@ def adagrad_conic_optim(model, positions_init, weights_init, n_iter, store_histo
                 dim=1,
             )
             
-        if torch.isnan(torch.tensor(current_loss)):
+        if torch.isnan(current_loss):
             print("NaN detected — stopping.")
             if store_history:
                 iter_loss[it] = torch.inf
