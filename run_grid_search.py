@@ -65,7 +65,7 @@ def core_computations(
         for dist in ["semi-distance", "Fisher-Rao", "Euclidean"]
     }
 
-    return (u0, seed, tau, kappa, init, n_samples), (scores, last_loss)
+    return (u0, seed, tau, kappa, init, n_samples), (scores, last_loss.item())
 
 
 # -------------------------
@@ -88,7 +88,9 @@ def skip_completed(iterable, existing_keys):
 tab_u0 = torch.logspace(-3, 1, steps=10).tolist()
 tab_n_samples = torch.logspace(2, 5, steps=6).to(torch.int).tolist()
 
-tab_tau = torch.logspace(-5, 0, steps=20).tolist()
+tab_tau_below_1 = torch.logspace(-5, 0, steps=20)
+tab_tau_above_1 = torch.logspace(0, 1, steps=5)[1:]  # skip the first element (1)
+tab_tau = torch.cat([tab_tau_below_1, tab_tau_above_1]).tolist()
 tab_kappa = torch.logspace(-14, -1, steps=20).tolist()
 tab_seed = [
     1214521201542216,

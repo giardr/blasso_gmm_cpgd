@@ -479,10 +479,10 @@ def compute_W1_score(
     The distance used can be the semi-distance, the Fisher-Rao distance, or the Euclidean distance.
     """
     if torch.isnan(positions_estimate).any() or torch.isnan(weights_estimate).any():
-        return torch.inf
+        return torch.inf.item()
 
     if weights_estimate.sum() < 1e-16:
-        return torch.inf
+        return torch.inf.item()
 
     n_particles, total_dim = positions_target.shape
     d = total_dim // 2
