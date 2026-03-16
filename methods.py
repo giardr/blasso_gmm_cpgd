@@ -84,15 +84,18 @@ class DiagonalGMMBlasso:
     kappa: float
     y: Tensor # in the code, it is the sample (X_1,..X_n). 
     tau: float
+    compute_norm_y: bool = False
 
     def __post_init__(self):
         _, self.d = self.y.shape
-        self.loss_offset = 1 / (self.tau**self.d * (2 * torch.pi) ** (self.d / 2))
+        if self.compute_norm_y:
+            self.loss_offset = 1/2 * (torch.exp(-((self.y[:, None, :] - self.y[None, :, :])**2).sum(-1) / (2 * self.tau**2)).mean()
+                    /(2 * torch.pi * self.tau**2)**(self.d/2))
+        else:
+            self.loss_offset = 1 / (self.tau**self.d * (2 * torch.pi) ** (self.d / 2))
         # upper bound on 1/2 * ||y||^2, to keep the loss positive.
         # Avoid complexity in n^2 for the computation of ||y||^2
-        # The formula for 1/2 * ||y||^2 is
-        # 1/2 * (torch.exp(-((self.y[:, None, :] - self.y[None, :, :])**2).sum(-1) / (2 * self.tau**2)).mean()
-        # /(2 * torch.pi * self.tau**2)**(self.d/2))
+
     
     def __call__(self, particles: Particles) -> Evaluation[Self]:
         return self.Evaluation(self, particles)
