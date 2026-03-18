@@ -430,7 +430,7 @@ def adagrad_conic_optim(model, positions_init, weights_init, n_iter, store_histo
                 iter_loss[it] = torch.inf
                 iter_particles[it] = last_estimate
                 return iter_loss, iter_particles
-            return torch.inf, last_estimate  # break
+            return torch.tensor(torch.inf), last_estimate  # break
         
         if store_history:
             iter_particles[it] = last_estimate
@@ -479,10 +479,10 @@ def compute_W1_score(
     The distance used can be the semi-distance, the Fisher-Rao distance, or the Euclidean distance.
     """
     if torch.isnan(positions_estimate).any() or torch.isnan(weights_estimate).any():
-        return torch.inf.item()
+        return torch.inf
 
     if weights_estimate.sum() < 1e-16:
-        return torch.inf.item()
+        return torch.inf
 
     n_particles, total_dim = positions_target.shape
     d = total_dim // 2
