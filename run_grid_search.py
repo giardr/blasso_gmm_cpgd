@@ -90,7 +90,10 @@ tab_n_samples = torch.logspace(2, 5, steps=6).to(torch.int).tolist()
 
 tab_tau_below_1 = torch.logspace(-5, 0, steps=20)
 tab_tau_above_1 = torch.logspace(0, 1, steps=5)[1:]  # skip the first element (1)
-tab_tau = torch.cat([tab_tau_below_1, tab_tau_above_1]).tolist()
+tab_tau_above10 = torch.logspace(1, 1.3, steps=3)[1:]  # skip the first element (1)
+tab_tau_above20 = torch.logspace(1.3, 1.7, steps=3)[1:]  # skip the first element (1)
+tab_tau=tab_tau_above20.tolist()
+#tab_tau = torch.cat([tab_tau_below_1, tab_tau_above_1, tab_tau_above10]).tolist()
 tab_kappa = torch.logspace(-14, -1, steps=20).tolist()
 tab_seed = [
     1214521201542216,
@@ -144,6 +147,7 @@ if __name__ == "__main__":
     ) as executor:
         # Submit tasks lazily to avoid huge memory usage
         futures = {}
+
         for h in tqdm(hyperparams_iter, desc="Submitting tasks"):
             future = executor.submit(core_computations, *h, n_iter=3000, num_threads=1)
             futures[future] = h
