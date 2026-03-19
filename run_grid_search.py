@@ -92,7 +92,8 @@ tab_tau_below_1 = torch.logspace(-5, 0, steps=20)
 tab_tau_above_1 = torch.logspace(0, 1, steps=5)[1:]  # skip the first element
 tab_tau_above10 = torch.logspace(1, 1.3, steps=3)[1:]
 tab_tau_above20 = torch.logspace(1.3, 1.7, steps=3)[1:]
-tab_tau = torch.cat([tab_tau_below_1, tab_tau_above_1, tab_tau_above10]).tolist()
+tab_tau_above50 = torch.logspace(1.7, 2, steps=3)[1:]
+tab_tau = torch.cat([tab_tau_below_1, tab_tau_above_1, tab_tau_above10, tab_tau_above20, tab_tau_above50]).tolist()
 tab_kappa = torch.logspace(-14, -1, steps=20).tolist()
 tab_seed = [
     1214521201542216,
