@@ -22,6 +22,7 @@ Required Python packages:
 
 ## Files
 
+|--------------------------|-----------------------------------------------------------------------------|
 | `cpgd_sympy.ipynb`        | Symbolic computations to verify the calculations presented in the proofs of the article, and to obtain formulas used in `methods.py`. |
 | `cpgd_experiments.ipynb`  | Numerical experiments with the CPGD algorithm; results discussed in Section 4 of the article.|
 | `methods.py`              | Core algorithm implementations.                                             |
