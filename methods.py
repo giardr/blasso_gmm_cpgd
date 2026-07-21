@@ -306,42 +306,6 @@ class DiagonalGMMBlasso:
                     / ((4 * torch.pi * sigmas2_plus_tau2_over_2) ** 0.25).prod(dim=-1)
                 )
 
-        def Jp_on_x(self,x):
-            """
-            x of size m * 2d
-            """
-            d=self.problem.d
-            tau2 = self.problem.tau**2
-            sigma2_plus_tau2_over_2=x[:,d:]**2 + tau2/2
-            sigma2_mu_plus_tau2_over_2=self.particles.positions[:,d:]**2 + tau2/2
-            dmeans2=(self.particles.positions[None,:,:d]-x[:,None,:d])**2
-
-            #kernel
-            sigma2_mu_plus_sigma2_plus_tau2 = (
-                sigma2_plus_tau2_over_2[:,None,:] + sigma2_mu_plus_tau2_over_2[None,:,:]
-            )
-            factor = (2 * sigma2_mu_plus_tau2_over_2[None,:,:]) ** 0.25 * (2 * sigma2_plus_tau2_over_2[:,None,:])** 0.25
-            num = torch.exp(-dmeans2 / (2 * sigma2_mu_plus_sigma2_plus_tau2))
-            denom = torch.sqrt(sigma2_mu_plus_sigma2_plus_tau2)
-            per_dim = (
-                factor * num / denom
-            )
-            kernel = per_dim.prod(dim=-1)
-
-            #scalar product
-            denom = sigma2_plus_tau2_over_2[:, None, :] + tau2/2
-            dmeans_samples2 = (x[:,None,:d]-self.problem.y[None,:,:])**2
-            per_dim = (
-                (2 * sigma2_plus_tau2_over_2[:, None, :]) ** 0.25
-                * torch.exp(-dmeans_samples2 / (2 * denom))
-                / (torch.sqrt(denom) * (2 * torch.pi) ** 0.25)
-            ) 
-            scalar_product = per_dim.prod(dim=2).mean(dim=1)  # (n_particles, n)
-
-            return (self.problem.kappa
-                    + kernel @ self.particles.weights
-                    - scalar_product)
-
 
 @dataclass
 class AdagradConicOptimizer:
