@@ -1,0 +1,10 @@
+numpy>=2
+scipy
+matplotlib
+scikit-learn
+sympy
+tqdm
+jaxtyping
+pot
+jupyter
+torch

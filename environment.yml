@@ -1,0 +1,17 @@
+name: blasso_gmm_cpgd
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - numpy>=2
+  - scipy
+  - matplotlib
+  - scikit-learn
+  - sympy
+  - tqdm
+  - jaxtyping
+  - pot
+  - jupyter
+  - pip
+  - pip:
+    - torch
